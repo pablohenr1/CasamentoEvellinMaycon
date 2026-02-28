@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Presentes | Kathleen & Pablo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body style="padding-top: 100px;">
+    <nav class="navbar">
+        <a href="index.html">Início</a>
+        <a href="historia.html">Nossa História</a>
+        <a href="programacao.html">O Grande Dia</a>
+        <a href="presentes.html" class="nav-destaque">Lista de Presentes</a>
+        <a href="rsvp.html">RSVP</a>
+    </nav>
+
+    <div class="welcome-message">
+        <p>Sinta-se à vontade para escolher o que tocar o seu coração ❤️</p>
+    </div>
+
+    <nav class="filters">
+        <button class="filter-btn active" onclick="filtrar('todos')">Todos</button>
+        <button class="filter-btn" onclick="filtrar('Cozinha')">Cozinha</button>
+        <button class="filter-btn" onclick="filtrar('Quarto')">Quarto</button>
+        <button class="filter-btn" onclick="filtrar('Sala')">Sala</button>
+        <button class="filter-btn" onclick="filtrar('Banheiro')">Banheiro</button>
+        <button class="filter-btn" onclick="filtrar('ÁREA SERV.')">Área Serviço</button>
+    </nav>
+
+    <main id="lista-presentes">
+        <div class="loading">Carregando lista com carinho... 🌿</div>
+    </main>
+
+    <footer><p>Com amor, Kathleen & Pablo ❤️</p></footer>
+
+    <div id="modal" class="modal hidden">
+        <div class="modal-content">
+            <span class="close-modal" id="btn-cancelar">&times;</span>
+            <div id="passo-formulario">
+                <h3 class="modal-title">Presentear</h3>
+                <p>Você escolheu: <strong id="nome-item-modal" class="item-highlight">Item</strong></p>
+                <p class="instruction">Que alegria! Digite seu nome para sabermos quem deu:</p>
+                <input type="text" id="nome-convidado" placeholder="Ex: Tio João e Tia Maria">
+                <button id="btn-confirmar" class="btn-primary">Confirmar Presente 🎁</button>
+            </div>
+            <div id="passo-sucesso" class="hidden text-center">
+                <div class="heart-animation">❤️</div>
+                <h3 class="modal-title">Obrigado!</h3>
+                <p class="sucesso-msg">Ficamos muito felizes com seu carinho.</p>
+                <button class="btn-primary" onclick="fecharModal()">Fechar</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="app.js"></script>
+</body>
+</html>

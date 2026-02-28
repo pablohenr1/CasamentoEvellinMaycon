@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RSVP | Kathleen & Pablo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body style="padding-top: 100px;">
+    <nav class="navbar">
+        <a href="index.html">Início</a>
+        <a href="historia.html">Nossa História</a>
+        <a href="programacao.html">O Grande Dia</a>
+        <a href="presentes.html">Lista de Presentes</a>
+        <a href="rsvp.html" class="nav-destaque">RSVP</a>
+    </nav>
+
+   <section class="section container">
+        <h2 class="section-title">Confirme sua Presença</h2>
+        <p class="section-text" id="rsvp-instrucao">Digite seu nome ou sobrenome para encontrar seu convite.</p>
+        
+        <div id="passo-busca" class="rsvp-form">
+            <input type="text" id="busca-nome" placeholder="Ex: Marlos Avelino" required>
+            <button id="btn-buscar" class="btn-primary">Buscar Convite</button>
+            <p id="msg-erro-busca" style="color: red; margin-top: 10px; display: none;">Convite não encontrado. Tente apenas o primeiro nome.</p>
+        </div>
+
+       <div id="passo-confirmar" class="rsvp-form hidden">
+            <h3 id="convite-nome" style="color: var(--marsala); font-family: var(--font-serif); font-size: 1.5rem; margin-bottom: 5px;">Família</h3>
+            
+            <select id="rsvp-presenca" required>
+                <option value="" disabled selected>O grupo irá comparecer?</option>
+                <option value="confirmado">Sim, confirmaremos presença! 🎉</option>
+                <option value="recusado">Não poderemos ir 😔</option>
+            </select>
+
+            <div id="div-lista-nomes" class="hidden" style="margin-top: 15px; text-align: left; background: var(--bg-cream); padding: 15px; border-radius: 8px; border: 1px solid var(--rose-light);">
+                <p style="margin-bottom: 10px; font-weight: bold; color: var(--marsala);">Marque quem irá comparecer:</p>
+                <div id="container-checkboxes">
+                    </div>
+            </div>
+
+            <textarea id="rsvp-mensagem" placeholder="Deixe uma mensagem para os noivos (Opcional)" rows="3" style="margin-top: 15px;"></textarea>
+            
+            <button id="btn-enviar-rsvp" class="btn-primary" style="margin-top: 15px;">Enviar Confirmação</button>
+            <button id="btn-voltar-busca" style="background: none; border: none; color: #666; cursor: pointer; margin-top: 10px; text-decoration: underline;">Tentar outro nome</button>
+        </div>
+        
+        <div id="rsvp-sucesso" class="hidden text-center">
+            <div class="heart-animation">❤️</div>
+            <h3 style="color: var(--marsala); margin-top: 20px; font-family: var(--font-cursiva); font-size: 2.5rem;">Obrigado!</h3>
+            <p id="msg-sucesso-texto" style="color: var(--text-dark); margin-top: 10px;">Sua resposta foi salva com sucesso.</p>
+        </div>
+    </section>
+
+    <footer><p>Com amor, Kathleen & Pablo ❤️</p></footer>
+
+    <script type="module" src="rsvp.js"></script>
+</body>
+</html>

@@ -3,7 +3,7 @@ import { getFirestore, collection, addDoc, updateDoc, doc, onSnapshot, query, or
 from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 // ------------------------------------------------------------------
-// ⚠️ COLE SUA CONFIGURAÇÃO DO FIREBASE AQUI
+// SUAS CONFIGURAÇÕES (Mantive as que você mandou)
 // ------------------------------------------------------------------
 const firebaseConfig = {
   apiKey: "AIzaSyClI9Lg4IXjHtwZetZxgKdv55sSF-jRSg8",
@@ -18,17 +18,31 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// ... (Mantenha as variáveis globais e funções de Admin, carregarLista, filtrar e Modal iguais ao anterior) ...
+// --- VARIÁVEIS GLOBAIS ---
 const listaElement = document.getElementById('lista-presentes');
 let itemSelecionadoId = null;
 let categoriaAtual = 'todos'; 
+
+// Elementos do Modal (Novos para a animação)
+const modal = document.getElementById('modal');
+const passoForm = document.getElementById('passo-formulario'); // Certifique-se de ter atualizado o HTML
+const passoSucesso = document.getElementById('passo-sucesso'); // Certifique-se de ter atualizado o HTML
+const inputNome = document.getElementById('nome-convidado');
+const nomeItemModal = document.getElementById('nome-item-modal');
+
+// Verifica Admin
 const urlParams = new URLSearchParams(window.location.search);
 const souAdmin = urlParams.get('admin') === 'pablo';
 
-if (souAdmin) { document.querySelector('footer p').innerHTML += ' | 🔓 Modo Admin Ativo'; }
+if (souAdmin) { 
+    const footerP = document.querySelector('footer p');
+    if(footerP) footerP.innerHTML += ' | 🔓 Modo Admin Ativo'; 
+}
 
+// --- 1. CARREGAR E EXIBIR LISTA ---
 function carregarLista() {
     const q = query(collection(db, "presentes"), orderBy("nome"));
+
     onSnapshot(q, (snapshot) => {
         listaElement.innerHTML = ''; 
         if (snapshot.empty) { listaElement.innerHTML = '<div class="loading">Nenhum presente encontrado.</div>'; return; }
@@ -38,11 +52,13 @@ function carregarLista() {
             const id = doc.id;
             const estaReservado = item.status === 'reservado';
 
+            // Filtro de Categoria
             if (categoriaAtual !== 'todos' && !item.categoria.toLowerCase().includes(categoriaAtual.toLowerCase())) { return; }
 
             let botaoHtml = '';
             let classeReservado = estaReservado ? 'reservado' : '';
 
+            // Lógica do Botão
             if (estaReservado) {
                 if (souAdmin) {
                     botaoHtml = `<div style="background:#fff3cd; color:#856404; padding:10px; font-size:0.8rem; margin-top:auto;">🎁 Dado por: <strong>${item.reservado_por}</strong></div>`;
@@ -53,9 +69,11 @@ function carregarLista() {
                 botaoHtml = `<button class="btn-presentear" onclick="abrirModal('${id}', '${item.nome}')">Presentear 🎁</button>`;
             }
 
+            // Cria o Card
             const card = document.createElement('div');
             card.className = `card ${classeReservado}`;
-            // Adicionei um evento onerror para caso a imagem da internet falhe, carregar uma padrão
+            
+            // Tenta carregar a imagem local, se falhar, põe um placeholder
             card.innerHTML = `
                 <img src="${item.imagem}" alt="${item.nome}" class="card-img" loading="lazy" onerror="this.src='https://placehold.co/600x400?text=Foto+Indisponível'">
                 <div class="card-content">
@@ -69,63 +87,92 @@ function carregarLista() {
     });
 }
 
-// ... (Mantenha as funções filtrar e modal iguais) ...
+// --- 2. FILTROS ---
 window.filtrar = (categoria) => {
     categoriaAtual = categoria;
     document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
-    event.target.classList.add('active');
+    // Pequena proteção caso o evento não seja passado diretamente
+    if(event) event.target.classList.add('active');
     carregarLista();
 };
 
-const modal = document.getElementById('modal');
-const nomeItemModal = document.getElementById('nome-item-modal');
-const inputNome = document.getElementById('nome-convidado');
+// --- 3. MODAL (LÓGICA NOVA COM ANIMAÇÃO) ---
 
+// Abre o modal RESETANDO para o formulário inicial
 window.abrirModal = (id, nomeItem) => {
     itemSelecionadoId = id;
-    nomeItemModal.innerText = nomeItem; 
+    nomeItemModal.innerText = nomeItem;
+    
+    // Garante que o formulário apareça e o sucesso esteja escondido
+    if(passoForm) passoForm.classList.remove('hidden');
+    if(passoSucesso) passoSucesso.classList.add('hidden');
+    
+    inputNome.value = ''; 
     modal.classList.remove('hidden');
     inputNome.focus();
 };
 
-document.getElementById('btn-cancelar').addEventListener('click', () => { modal.classList.add('hidden'); itemSelecionadoId = null; });
+// Fecha o modal
+window.fecharModal = () => {
+    modal.classList.add('hidden');
+    itemSelecionadoId = null;
+};
 
-document.getElementById('btn-confirmar').addEventListener('click', async () => {
-    const nome = inputNome.value.trim();
-    if (!nome) { alert("Por favor, digite seu nome!"); return; }
-    
-    const btnConfirmar = document.getElementById('btn-confirmar');
-    btnConfirmar.innerText = "Salvando...";
-    btnConfirmar.disabled = true;
+// Botão Cancelar (X) - Verifica se o elemento existe antes de adicionar evento
+const btnCancelar = document.getElementById('btn-cancelar');
+if(btnCancelar) btnCancelar.addEventListener('click', window.fecharModal);
 
-    try {
-        await updateDoc(doc(db, "presentes", itemSelecionadoId), {
-            status: 'reservado',
-            reservado_por: nome,
-            data_reserva: new Date().toISOString()
-        });
-        alert("Obrigado! Sua reserva foi confirmada.");
-        modal.classList.add('hidden');
-        inputNome.value = ''; 
-    } catch (error) {
-        console.error("Erro:", error);
-        alert("Erro ao reservar.");
-    } finally {
-        btnConfirmar.innerText = "CONFIRMAR RESERVA";
-        btnConfirmar.disabled = false;
-    }
-});
+// Botão Confirmar (Salva e mostra Sucesso)
+const btnConfirmar = document.getElementById('btn-confirmar');
+if(btnConfirmar) {
+    btnConfirmar.addEventListener('click', async () => {
+        const nome = inputNome.value.trim();
 
+        if (!nome) {
+            alert("Por favor, digite seu nome para sabermos quem é! 😊");
+            return;
+        }
 
-// --- SCRIPT ATUALIZADO COM FOTOS REAIS (Unsplash/LoremFlickr) ---
+        btnConfirmar.innerText = "Salvando...";
+        btnConfirmar.disabled = true;
+
+        try {
+            // Atualiza no Firebase
+            await updateDoc(doc(db, "presentes", itemSelecionadoId), {
+                status: 'reservado',
+                reservado_por: nome,
+                data_reserva: new Date().toISOString()
+            });
+
+            // ✨ A MÁGICA: Esconde formulário -> Mostra Sucesso
+            if(passoForm && passoSucesso) {
+                passoForm.classList.add('hidden');
+                passoSucesso.classList.remove('hidden');
+            } else {
+                // Fallback caso o HTML não tenha sido atualizado
+                alert("Obrigado! Sua reserva foi confirmada.");
+                window.fecharModal();
+            }
+
+        } catch (error) {
+            console.error("Erro:", error);
+            alert("Ops! Erro ao reservar. Tente de novo.");
+        } finally {
+            btnConfirmar.innerText = "CONFIRMAR PRESENTE 🎁";
+            btnConfirmar.disabled = false;
+        }
+    });
+}
+
+// --- 4. SEMEAR BANCO COM SUAS IMAGENS LOCAIS ---
 window.semearBanco = async () => {
     if (!confirm("Isso vai apagar a lista atual e cadastrar tudo de novo. Confirma?")) return;
 
-    // Usei palavras-chave em inglês nas URLs para garantir que a busca ache fotos boas
+    // Sua lista com caminhos locais
     const listaComFotos = [
         // --- SALA ---
         { nome: "Televisão", categoria: "SALA", status: "livre", imagem: "Imagens/Sala/Tv.jpg" },
-        { nome: "Sofá (Verificar Medida)", categoria: "SALA", status: "livre", imagem: "Imagens/Sala/Sofa.jpg" },
+        { nome: "Sofá", categoria: "SALA", status: "livre", imagem: "Imagens/Sala/Sofa.jpg" },
         { nome: "Cortinas", categoria: "SALA", status: "livre", imagem: "Imagens/Sala/Cortina.jpg" },
         { nome: "Carpete/Tapete", categoria: "SALA", status: "livre", imagem: "Imagens/Sala/CarpeteSala.jpg" },
         { nome: "Almofadas Decorativas", categoria: "SALA", status: "livre", imagem: "Imagens/Sala/Almofadas.jpg" },
@@ -133,7 +180,6 @@ window.semearBanco = async () => {
 
         // --- QUARTO ---
         { nome: "Jogo de Cama", categoria: "QUARTO", status: "livre", imagem: "Imagens/Quarto/JogoCama.jpg" },
-        { nome: "Guarda-Roupa (Medidas)", categoria: "QUARTO", status: "livre", imagem: "Imagens/Quarto/GuardaRoupa.jpg" },
         { nome: "Cobertor ou Manta", categoria: "QUARTO", status: "livre", imagem: "Imagens/Quarto/Cobertor.jpg" },
         { nome: "Ferro de Passar", categoria: "QUARTO", status: "livre", imagem: "Imagens/Quarto/Ferro.jpg" }, 
 
@@ -155,21 +201,18 @@ window.semearBanco = async () => {
         { nome: "Garrafa de Café", categoria: "COZINHA", status: "livre", imagem: "Imagens/Cozinha/GarrafaCafe.jpg" },
         { nome: "Panos de Prato", categoria: "COZINHA", status: "livre", imagem: "Imagens/Cozinha/Panos.jpg" },
         { nome: "Kit Utensílios Silicone", categoria: "COZINHA", status: "livre", imagem: "Imagens/Cozinha/KitUtensilios.jpg" },
-        { nome: "Abridor de Garrafas", categoria: "COZINHA", status: "livre", imagem: "Imagens/Cozinha/Abridor.jpg" },
         { nome: "Ralador e Peneiras", categoria: "COZINHA", status: "livre", imagem: "Imagens/Cozinha/Ralador.jpg" },
         { nome: "Formas de Bolo", categoria: "COZINHA", status: "livre", imagem: "Imagens/Cozinha/Formas.jpg" },
         { nome: "Travessas de Vidro", categoria: "COZINHA", status: "livre", imagem: "Imagens/Cozinha/Travessas.jpg" },
 
         // --- BANHEIRO ---
-        
         { nome: "Cesto de Roupa e Lixeira", categoria: "BANHEIRO", status: "livre", imagem: "Imagens/Banheiro/Cesto.jpg" },
         { nome: "Jogo de Tapetes", categoria: "BANHEIRO", status: "livre", imagem: "Imagens/Banheiro/Jogo de Tapetes.jpg" },
         { nome: "Kit Sobre a Pia", categoria: "BANHEIRO", status: "livre", imagem: "Imagens/Banheiro/Porta SaboneteEscova.jpg" },
         { nome: "Escova Sanitária", categoria: "BANHEIRO", status: "livre", imagem: "Imagens/Banheiro/EscovaSanitaria.jpg" },
-        { nome: "Toalhas de Banho", categoria: "BANHEIRO", status: "livre", imagem: "Imagens/Banheiro/ToalhasBanho.jpg" },
+        { nome: "Toalhas de Rosto", categoria: "BANHEIRO", status: "livre", imagem: "Imagens/Banheiro/ToalhaRosto.jpg" },
 
         // --- ÁREA DE SERVIÇO ---
-        { nome: "Vassoura, Rodo e Pá", categoria: "ÁREA SERV.", status: "livre", imagem: "Imagens/AreaServ/VassouraRodoPa.jpg" },
         { nome: "Baldes e Bacias", categoria: "ÁREA SERV.", status: "livre", imagem: "Imagens/AreaServ/BaldesBacias.jpg" },
         { nome: "Tanquinho", categoria: "ÁREA SERV.", status: "livre", imagem: "Imagens/AreaServ/Tanquinho.jpg" },
         { nome: "Tábua de Passar", categoria: "ÁREA SERV.", status: "livre", imagem: "Imagens/AreaServ/Tabua.jpg" }
@@ -182,7 +225,8 @@ window.semearBanco = async () => {
         contador++;
         console.log(`Enviado: ${item.nome}`);
     }
-    alert(`Sucesso! ${contador} itens com FOTOS REAIS foram cadastrados. Recarregue a página.`);
+    alert(`Sucesso! ${contador} itens cadastrados com imagens locais.`);
 };
 
+// Inicia o app
 carregarLista();

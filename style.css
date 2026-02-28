@@ -313,3 +313,147 @@ footer {
     color: var(--rose-gold);
     font-size: 0.9rem;
 }
+
+/* --- ESTILO DO SUCESSO --- */
+#passo-sucesso {
+    text-align: center;
+    padding: 20px 0;
+    animation: fadeIn 0.5s ease;
+}
+
+.sucesso-msg {
+    font-family: var(--font-serif);
+    font-size: 1.2rem;
+    color: var(--marsala);
+    margin: 10px 0;
+}
+
+.sucesso-sub {
+    font-size: 0.9rem;
+    color: var(--text-light);
+    margin-bottom: 20px;
+}
+
+/* Animação do Coração */
+.heart-animation {
+    font-size: 4rem;
+    margin-bottom: 10px;
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- ESTILOS DA NOVA HOME ESTILO ZOLA --- */
+.navbar {
+    position: fixed; top: 0; left: 0; width: 100%;
+    background: rgba(255, 250, 240, 0.95);
+    backdrop-filter: blur(5px);
+    padding: 15px 0; text-align: center;
+    z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+.navbar a {
+    text-decoration: none; color: var(--text-dark);
+    font-family: var(--font-serif); margin: 0 15px;
+    font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px;
+    transition: color 0.3s;
+}
+.navbar a:hover { color: var(--marsala); }
+.nav-destaque { font-weight: bold; color: var(--marsala) !important; }
+
+.section { padding: 80px 20px; text-align: center; }
+.container { max-width: 800px; margin: 0 auto; }
+.section-title { font-family: var(--font-cursiva); font-size: 3.5rem; color: var(--marsala); margin-bottom: 20px; font-weight: normal; }
+.section-text { font-size: 1.1rem; color: var(--text-dark); margin-bottom: 40px; }
+
+/* Contagem Regressiva */
+.countdown { display: flex; justify-content: center; gap: 20px; margin-top: 30px; }
+.countdown div { background: rgba(255,255,255,0.8); border: 1px solid var(--rose-gold); padding: 15px; border-radius: 8px; min-width: 80px; }
+.countdown span { font-size: 2rem; color: var(--marsala); font-weight: bold; }
+.countdown p { font-size: 0.8rem; text-transform: uppercase; color: var(--text-light); margin: 0; }
+
+/* Grid de Detalhes */
+.detalhes-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 30px; }
+.detalhe-item h3 { color: var(--marsala); margin-bottom: 10px; font-family: var(--font-serif); }
+
+/* Formulário RSVP */
+.rsvp-form { display: flex; flex-direction: column; gap: 15px; background: var(--white); padding: 40px; border-radius: 10px; border: 1px solid var(--rose-light); box-shadow: 0 10px 30px rgba(122, 46, 57, 0.05); }
+.rsvp-form select, .rsvp-form textarea { width: 100%; padding: 12px; border: 1px solid #ccc; background: var(--white); font-family: var(--font-serif); font-size: 1rem; outline: none; }
+.rsvp-form select:focus, .rsvp-form textarea:focus { border-color: var(--marsala); }
+.text-center { text-align: center; }
+
+/* --- CARROSSEL --- */
+.carousel-container {
+    position: relative;
+    max-width: 100%;
+    margin: auto;
+    overflow: hidden;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(122, 46, 57, 0.15);
+    border: 3px solid var(--rose-light);
+}
+.carousel-slide {
+    display: none;
+    width: 100%;
+}
+.carousel-slide.active {
+    display: block;
+    animation: fade 1.5s;
+}
+.carousel-slide img {
+    width: 100%;
+    height: 450px; /* Altura fixa para manter o padrão */
+    object-fit: cover;
+}
+.carousel-btn {
+    cursor: pointer;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: auto;
+    padding: 15px 20px;
+    color: white;
+    font-weight: bold;
+    font-size: 20px;
+    transition: 0.3s ease;
+    background-color: rgba(122, 46, 57, 0.6); /* Marsala transparente */
+    border: none;
+}
+.carousel-btn.prev { left: 0; border-radius: 0 5px 5px 0; }
+.carousel-btn.next { right: 0; border-radius: 5px 0 0 5px; }
+.carousel-btn:hover { background-color: var(--marsala); }
+
+@keyframes fade {
+    from {opacity: .5} 
+    to {opacity: 1}
+}
+
+/* --- GOOGLE MAPS --- */
+.map-container {
+    position: relative;
+    width: 100%;
+    height: 450px;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 3px solid var(--rose-light);
+    box-shadow: 0 10px 25px rgba(122, 46, 57, 0.15);
+}
+
+/* Ajustes mobile para não ficar esticado */
+@media (max-width: 768px) {
+    .carousel-slide img, .map-container { height: 300px; }
+}
+
+.welcome-message{
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}

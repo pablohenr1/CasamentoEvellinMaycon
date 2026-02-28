@@ -3,58 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lista de Presentes | Kathleen & Pablo </title>
-    
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <title>Início | Pablo & Kathleen</title>
     <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
-    
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
-    <header class="hero">
-        <div class="hero-overlay"></div> <div class="hero-content">
-            <span class="date">19 . 09 . 2026</span>
-            <h1 class="main-title">Kathleen <span class="amp">&</span> Pablo</h1>
-            <p class="subtitle">Celebrando nosso amor</p>
-        </div>s
-    </header>
-
-    <nav class="filters">
-        <div class="mensagem-intro">
-            <p>Escolha um presente para fazer parte da nossa história</p>
-        </div>
-        <span class="filter-label" style="width:100%; text-align:center; display:block; margin-bottom:10px; color:var(--text-light); font-size:0.8rem; text-transform:uppercase;">Filtrar lista por:</span>
-        <button class="filter-btn active" onclick="filtrar('todos')">Todos</button>
-        <button class="filter-btn" onclick="filtrar('Cozinha')">Cozinha</button>
-        <button class="filter-btn" onclick="filtrar('Quarto')">Quarto</button>
-        <button class="filter-btn" onclick="filtrar('Sala')">Sala</button>
-        <button class="filter-btn" onclick="filtrar('Banheiro')">Banheiro</button>
-        <button class="filter-btn" onclick="filtrar('ÁREA SERV.')">Área Serviço</button>
+    <nav class="navbar">
+        <a href="index.html" class="nav-destaque">Início</a>
+        <a href="historia.html">Nossa História</a>
+        <a href="programacao.html">O Grande Dia</a>
+        <a href="presentes.html">Lista de Presentes</a>
+        <a href="rsvp.html">RSVP</a>
     </nav>
 
-    <main id="lista-presentes">
-        <div class="loading">Carregando lista com carinho... 🌿</div>
-    </main>
-
-    <footer>
-        <p>Com amor, Pablo & Kathleen ❤️</p>
-    </footer>
-
-    <div id="modal" class="modal hidden">
-        <div class="modal-content">
-            <span class="close-modal" id="btn-cancelar">&times;</span>
-            <h3 class="modal-title">Muito Obrigado!</h3>
-            <p>Você vai presentear: <br><strong id="nome-item-modal" class="item-highlight">Item</strong></p>
+    <header class="hero" style="height: 100vh;">
+        <div class="hero-content">
+            <span class="date">19 . 09 . 2026</span>
+            <h1 class="main-title">Pablo <span class="amp">&</span> Kathleen</h1>
+            <p class="subtitle">Contagem regressiva para o Sim!</p>
             
-            <p class="instruction">Por favor, escreva seu nome para sabermos quem deu:</p>
-            <input type="text" id="nome-convidado" placeholder="Ex: Família Silva">
-            
-            <button id="btn-confirmar" class="btn-primary">Confirmar Presente 🎁</button>
+            <div id="countdown" class="countdown">
+                <div><span id="dias">00</span><p>Dias</p></div>
+                <div><span id="horas">00</span><p>Horas</p></div>
+                <div><span id="minutos">00</span><p>Minutos</p></div>
+            </div>
         </div>
-    </div>
+    </header>
 
-    <script type="module" src="app.js"></script>
+    <section class="section container">
+        <h2 class="section-title">Bem-vindos!</h2>
+        <p class="section-text" style="line-height: 1.8;">
+            Estamos muito felizes em compartilhar esse momento com vocês! Criamos este espaço para reunir todas as informações importantes do nosso casamento. Aqui vocês encontrarão os detalhes sobre o local, nossa história, a lista de presentes e o formulário para confirmar sua presença. Navegue e sinta-se em casa!
+        </p>
+    </section>
+
+    <section class="section container" style="padding-top: 0;">
+        <div class="carousel-container">
+            <div class="carousel-slide active">
+                <img src="Imagens/Buque.jpeg" alt="Foto 1">
+            </div>
+            <div class="carousel-slide">
+                <img src="Imagens/famengo.jpeg" alt="Foto 2">
+            </div>
+            <div class="carousel-slide">
+                <img src="Imagens/Casamento.jpeg" alt="Foto 3">
+            </div>
+            
+            <button class="carousel-btn prev" id="btn-prev">&#10094;</button>
+            <button class="carousel-btn next" id="btn-next">&#10095;</button>
+        </div>
+    </section>
+
+    <footer><p>Com amor, Pablo & Kathleen ❤️</p></footer>
+    
+    <script type="module" src="home.js"></script>
 </body>
 </html>
