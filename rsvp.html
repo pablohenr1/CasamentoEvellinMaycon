@@ -10,7 +10,6 @@
 <body style="padding-top: 100px;">
     <nav class="navbar">
         <a href="index.html">Início</a>
-        <a href="historia.html">Nossa História</a>
         <a href="programacao.html">O Grande Dia</a>
         <a href="presentes.html">Lista de Presentes</a>
         <a href="rsvp.html" class="nav-destaque">RSVP</a>
@@ -26,16 +25,10 @@
             <p id="msg-erro-busca" style="color: red; margin-top: 10px; display: none;">Convite não encontrado. Tente apenas o primeiro nome.</p>
         </div>
 
-       <div id="passo-confirmar" class="rsvp-form hidden">
+     <div id="passo-confirmar" class="rsvp-form hidden">
             <h3 id="convite-nome" style="color: var(--marsala); font-family: var(--font-serif); font-size: 1.5rem; margin-bottom: 5px;">Família</h3>
             
-            <select id="rsvp-presenca" required>
-                <option value="" disabled selected>O grupo irá comparecer?</option>
-                <option value="confirmado">Sim, confirmaremos presença! 🎉</option>
-                <option value="recusado">Não poderemos ir 😔</option>
-            </select>
-
-            <div id="div-lista-nomes" class="hidden" style="margin-top: 15px; text-align: left; background: var(--bg-cream); padding: 15px; border-radius: 8px; border: 1px solid var(--rose-light);">
+            <div id="div-lista-nomes" style="margin-top: 15px; text-align: left; background: var(--bg-cream); padding: 15px; border-radius: 8px; border: 1px solid var(--rose-light);">
                 <p style="margin-bottom: 10px; font-weight: bold; color: var(--marsala);">Marque quem irá comparecer:</p>
                 <div id="container-checkboxes">
                     </div>
@@ -43,8 +36,10 @@
 
             <textarea id="rsvp-mensagem" placeholder="Deixe uma mensagem para os noivos (Opcional)" rows="3" style="margin-top: 15px;"></textarea>
             
-            <button id="btn-enviar-rsvp" class="btn-primary" style="margin-top: 15px;">Enviar Confirmação</button>
-            <button id="btn-voltar-busca" style="background: none; border: none; color: #666; cursor: pointer; margin-top: 10px; text-decoration: underline;">Tentar outro nome</button>
+            <button id="btn-enviar-rsvp" class="btn-primary" style="margin-top: 15px;">Confirmar Presença</button>
+            <button id="btn-recusar-rsvp" style="width: 100%; background-color: #e0e0e0; color: #555; border: none; padding: 15px; font-size: 1rem; cursor: pointer; font-family: var(--font-serif); border-radius: 4px; margin-top: 10px; transition: background 0.3s;">Ninguém poderá ir 😔</button>
+            
+            <button id="btn-voltar-busca" style="background: none; border: none; color: #666; cursor: pointer; margin-top: 15px; text-decoration: underline;">Tentar outro nome</button>
         </div>
         
         <div id="rsvp-sucesso" class="hidden text-center">

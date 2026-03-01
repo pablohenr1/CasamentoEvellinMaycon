@@ -110,16 +110,6 @@ function mostrarTelaConfirmacao() {
     });
 }
 
-// Mostra/Esconde a lista de nomes dependendo se escolheu "Sim" ou "Não"
-document.getElementById("rsvp-presenca").addEventListener("change", (e) => {
-    const divListaNomes = document.getElementById("div-lista-nomes");
-    if (e.target.value === "confirmado") {
-        divListaNomes.classList.remove("hidden");
-    } else {
-        divListaNomes.classList.add("hidden");
-    }
-});
-
 // Botão Voltar para a busca
 document.getElementById("btn-voltar-busca").addEventListener("click", () => {
     passoConfirmar.classList.add("hidden");
@@ -130,29 +120,25 @@ document.getElementById("btn-voltar-busca").addEventListener("click", () => {
     
     inputBusca.value = "";
     conviteSelecionado = null;
-    document.getElementById("rsvp-presenca").value = ""; // Reseta o select
-    document.getElementById("div-lista-nomes").classList.add("hidden");
 });
 
 // ------------------------------------------------------------------
 // 3. LÓGICA DE SALVAR A CONFIRMAÇÃO NO FIREBASE
 // ------------------------------------------------------------------
-document.getElementById("btn-enviar-rsvp").addEventListener("click", async () => {
-    const presenca = document.getElementById("rsvp-presenca").value;
-    if (!presenca) {
-        alert("Por favor, selecione se o grupo irá comparecer.");
-        return;
-    }
-
+async function salvarPresencaFirebase(vaiComparecerGrupo) {
     const btnEnviar = document.getElementById("btn-enviar-rsvp");
+    const btnRecusar = document.getElementById("btn-recusar-rsvp");
+    
     btnEnviar.innerText = "Salvando...";
     btnEnviar.disabled = true;
+    if(btnRecusar) btnRecusar.disabled = true;
 
-    // Atualiza o status de cada membro baseado nas caixinhas marcadas
+    // Atualiza o status de cada membro
     let membrosAtualizados = [...conviteSelecionado.membros];
     let totalConfirmados = 0;
     
-    if (presenca === "confirmado") {
+    if (vaiComparecerGrupo) {
+        // Se o grupo vai, verifica quem marcou a caixinha
         const checkboxes = document.querySelectorAll('.chk-membro');
         checkboxes.forEach(chk => {
             const index = chk.value;
@@ -162,22 +148,24 @@ document.getElementById("btn-enviar-rsvp").addEventListener("click", async () =>
         });
         
         if (totalConfirmados === 0) {
-            alert("Por favor, marque pelo menos uma pessoa da lista, ou mude a resposta geral para 'Não poderemos ir'.");
-            btnEnviar.innerText = "Enviar Confirmação";
+            alert("Por favor, marque pelo menos uma pessoa da lista, ou clique no botão 'Ninguém poderá ir'.");
+            btnEnviar.innerText = "Confirmar Presença";
             btnEnviar.disabled = false;
+            if(btnRecusar) btnRecusar.disabled = false;
             return;
         }
     } else {
-        // Se a resposta for "Não vou", todo mundo do grupo recebe "falso" na confirmação
+        // Se a resposta for "Não vamos", todo mundo do grupo recebe falso
         membrosAtualizados = membrosAtualizados.map(m => ({ ...m, confirmado: false }));
     }
 
+    const statusFinal = vaiComparecerGrupo ? "confirmado" : "recusado";
     const mensagem = document.getElementById("rsvp-mensagem").value.trim();
 
     try {
         await updateDoc(doc(db, "convidados", conviteSelecionado.id), {
-            status_convite: presenca, // "confirmado" ou "recusado"
-            membros: membrosAtualizados, // Salva a lista inteira atualizada com true/false
+            status_convite: statusFinal,
+            membros: membrosAtualizados,
             mensagem_noivos: mensagem,
             data_resposta: new Date().toISOString()
         });
@@ -186,7 +174,7 @@ document.getElementById("btn-enviar-rsvp").addEventListener("click", async () =>
         passoSucesso.classList.remove("hidden");
         
         const msgSucessoTexto = document.getElementById("msg-sucesso-texto");
-        if (presenca === "confirmado") {
+        if (statusFinal === "confirmado") {
             msgSucessoTexto.innerText = `Presença confirmada para ${totalConfirmados} pessoa(s). Esperamos vocês lá!`;
         } else {
             msgSucessoTexto.innerText = "Que pena que não poderão ir. Agradecemos por avisarem!";
@@ -195,48 +183,27 @@ document.getElementById("btn-enviar-rsvp").addEventListener("click", async () =>
     } catch (error) {
         console.error("Erro ao salvar no Firebase:", error);
         alert("Ops! Erro ao enviar confirmação. Tente novamente.");
-        btnEnviar.innerText = "Enviar Confirmação";
+        btnEnviar.innerText = "Confirmar Presença";
         btnEnviar.disabled = false;
+        if(btnRecusar) btnRecusar.disabled = false;
     }
+}
+
+// Botão VERDE: Confirmar Presença (Verifica os checkboxes)
+document.getElementById("btn-enviar-rsvp").addEventListener("click", () => {
+    salvarPresencaFirebase(true);
 });
 
-// ------------------------------------------------------------------
-// 4. SCRIPT PARA SEMEAR O BANCO (IMPORTAR DADOS DE TESTE)
-// ------------------------------------------------------------------
-window.semearConvidados = async () => {
-    if (!confirm("Isso vai criar grupos de teste (como a Família do Marlos). Continuar?")) return;
-
-    const listaConvidados = [
-        {
-            status_convite: "pendente",
-            mensagem_noivos: "",
-            membros: [
-                { nome: "Marlos Avelino", confirmado: false },
-                { nome: "Cleide Lopes", confirmado: false },
-                { nome: "Carlos Eduardo Filho 1", confirmado: false }
-            ]
-        },
-        {
-            status_convite: "pendente",
-            mensagem_noivos: "",
-            membros: [
-                { nome: "Kathleen", confirmado: false },
-                { nome: "Pablo", confirmado: false }
-            ]
+// Botão CINZA: Ninguém vai (Marca tudo como falso e recusa)
+const btnRecusar = document.getElementById("btn-recusar-rsvp");
+if(btnRecusar) {
+    btnRecusar.addEventListener("click", () => {
+        const certeza = confirm("Tem certeza de que deseja informar que NENHUM de vocês poderá ir?");
+        if(certeza) {
+            salvarPresencaFirebase(false);
         }
-    ];
-
-    try {
-        for (const convite of listaConvidados) {
-            await addDoc(collection(db, "convidados"), convite);
-            console.log(`Convite criado para: ${convite.membros[0].nome}`);
-        }
-        alert("Grupos de teste adicionados! Pode pesquisar por 'Marlos' ou 'Kathleen' no site agora.");
-    } catch (error) {
-        console.error("Erro ao importar convidados:", error);
-        alert("Erro ao semear o banco.");
-    }
-};
+    });
+}
 
 // ------------------------------------------------------------------
 // 4. SCRIPT PARA SEMEAR O BANCO (SUA LISTA REAL!)
