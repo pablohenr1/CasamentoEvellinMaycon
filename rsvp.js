@@ -256,7 +256,7 @@ window.semearConvidados = async () => {
         {"status_convite": "pendente", "mensagem_noivos": "", "membros": [{"nome": "Edivaldo", "confirmado": false}, {"nome": "Darci", "confirmado": false}]},
         {"status_convite": "pendente", "mensagem_noivos": "", "membros": [{"nome": "Kely Cristina", "confirmado": false}, {"nome": "Marco Aurelio", "confirmado": false}, {"nome": "Gustavo", "confirmado": false}]},
         {"status_convite": "pendente", "mensagem_noivos": "", "membros": [{"nome": "Yasmim", "confirmado": false}, {"nome": "Vitor", "confirmado": false}]},
-        {"status_convite": "pendente", "mensagem_noivos": "", "membros": [{"nome": "Suiane", "confirmado": false}]},
+        {"status_convite": "pendente", "mensagem_noivos": "", "membros": [{"nome": "Suiane", "confirmado": false}, {"nome": "Dijari", "confirmado": false}]},
         {"status_convite": "pendente", "mensagem_noivos": "", "membros": [{"nome": "Camile", "confirmado": false}]},
         {"status_convite": "pendente", "mensagem_noivos": "", "membros": [{"nome": "Thalysson", "confirmado": false}]},
         {"status_convite": "pendente", "mensagem_noivos": "", "membros": [{"nome": "Thais", "confirmado": false}]},
@@ -300,7 +300,8 @@ window.semearConvidados = async () => {
         {"status_convite": "pendente", "mensagem_noivos": "", "membros": [{"nome": "Ilma", "confirmado": false}]},
         {"status_convite": "pendente", "mensagem_noivos": "", "membros": [{"nome": "Jailton", "confirmado": false}]},
         {"status_convite": "pendente", "mensagem_noivos": "", "membros": [{"nome": "Gabriele Arcanjo", "confirmado": false}]},
-        {"status_convite": "pendente", "mensagem_noivos": "", "membros": [{"nome": "Jose Lopes", "confirmado": false}, {"nome": "Rosenda", "confirmado": false}]}
+        {"status_convite": "pendente", "mensagem_noivos": "", "membros": [{"nome": "Jose Lopes", "confirmado": false}, {"nome": "Rosenda", "confirmado": false}]},
+        {"status_convite": "pendente", "mensagem_noivos": "", "membros": [{"nome": "Lucilene", "confirmado": false}, {"nome": "Luciano", "confirmado": false}]}
     ];
 
     try {
