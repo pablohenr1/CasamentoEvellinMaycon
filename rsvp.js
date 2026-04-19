@@ -30,9 +30,9 @@ const msgErroBusca = document.getElementById("msg-erro-busca");
 
 let conviteSelecionado = null; 
 
-// ------------------------------------------------------------------
-// 1. LÓGICA DE BUSCA
-// ------------------------------------------------------------------
+/// ------------------------------------------------------------------
+// 1. LÓGICA DE BUSCA (ATUALIZADA)
+/// ------------------------------------------------------------------
 btnBuscar.addEventListener("click", async () => {
     const termo = inputBusca.value.trim().toLowerCase();
     if (!termo) {
@@ -63,6 +63,23 @@ btnBuscar.addEventListener("click", async () => {
 
         if (encontrado) {
             conviteSelecionado = encontrado;
+
+            // VERIFICAÇÃO DE STATUS: Se já respondeu, vai direto para o sucesso
+            if (encontrado.status_convite === "confirmado" || encontrado.status_convite === "recusado") {
+                passoBusca.classList.add("hidden");
+                passoSucesso.classList.remove("hidden");
+                
+                const msgSucessoTexto = document.getElementById("msg-sucesso-texto");
+                const jaConfirmado = encontrado.status_convite === "confirmado";
+                
+                msgSucessoTexto.innerText = jaConfirmado 
+                    ? `Olá! A presença deste convite já foi confirmada anteriormente. Ficamos muito felizes em ter vocês conosco!`
+                    : `Olá! Este convite já foi respondido com uma justificativa de ausência. Agradecemos o carinho!`;
+                
+                return; // Encerra aqui para não mostrar o formulário
+            }
+
+            // Se o status for "pendente", segue o fluxo normal
             mostrarTelaConfirmacao();
         } else {
             msgErroBusca.style.display = "block";
