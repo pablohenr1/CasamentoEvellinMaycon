@@ -60,6 +60,26 @@ body {
     z-index: 1;
 }
 
+footer.Empresa  {
+    text-align: center;
+    padding: 1.5rem;
+    width: 100%; /* Garante que ocupe a largura toda */
+    border-top: 1px solid #e5e7eb;
+    color: #9ca3af;
+    font-size: 0.75rem;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    letter-spacing: 0.05rem;
+    background-color: #f9fafb;
+    margin-top: auto; /* Reforço para o Flexbox empurrá-lo para o fim */
+}
+
+.h-full {
+    height: calc(100% - 30px); 
+    min-height: 150px;
+}
+
+.mt-15 { margin-top: 15px; }
+
 .hero-content { position: relative; z-index: 2; padding: 0 20px; }
 
 .date {
