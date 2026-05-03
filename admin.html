@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel RSVP | Evelin & Maycon</title>
+    <style>
+        :root {
+            --verde-oliva: #5a6b4a;
+            --verde-claro: #839771;
+            --bg-cream: #f4f7f6;
+            --text-dark: #333;
+            --bege-claro: #be8a47;
+        }
+        
+        /* { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bege-claro); color: var(--text-dark); padding: 20px; }*/
+        body {   
+        background-image: url('Imagens/Fundo Claro.jpg'); 
+        background-position: center;
+        background-repeat: repeat; /* Para garantir que preencha tudo se o site crescer */
+        background-attachment: fixed;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        color: var(--text-dark); 
+        padding: 20px;
+        }
+        
+        .container { max-width: 1200px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        h1 { color: var(--verde-oliva); text-align: center; margin-bottom: 30px; border-bottom: 2px solid #e0ddd5; padding-bottom: 15px; }
+        
+        /* Formulário de Adição Rápida */
+        .add-form-container { background-color: #f9faf8; border: 2px dashed var(--verde-claro); padding: 20px; border-radius: 8px; margin-bottom: 30px; }
+        .add-form-container h3 { margin-top: 0; color: var(--verde-oliva); font-size: 1.1rem; }
+        .form-group-row { display: flex; gap: 15px; flex-wrap: wrap; align-items: flex-start; }
+        .form-input { flex: 1; min-width: 200px; padding: 12px; border: 1px solid #ccc; border-radius: 4px; font-size: 1rem; }
+        .btn-adicionar { background-color: var(--verde-oliva); color: white; padding: 12px 25px; border: none; border-radius: 4px; cursor: pointer; font-size: 1rem; font-weight: bold; transition: background 0.3s; white-space: nowrap; }
+        .btn-adicionar:hover { background-color: #3e451a; }
+
+        /* Cartões de Resumo */
+        .resumo-grid { display: flex; gap: 20px; margin-bottom: 30px; justify-content: space-between; flex-wrap: wrap; }
+        .card-resumo { flex: 1; min-width: 200px; padding: 20px; text-align: center; border-radius: 8px; color: white; font-weight: bold; }
+        .bg-total { background-color: #4A90E2; }
+        .bg-confirmados { background-color: #27AE60; }
+        .bg-pendentes { background-color: #F39C12; }
+        .bg-recusados { background-color: #E74C3C; }
+        .card-resumo h4 { margin: 0; font-size: 1rem; opacity: 0.9; }
+        .card-resumo p { margin: 10px 0 0; font-size: 2.2rem; }
+
+        /* Tabela */
+        .header-acoes { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 0.95rem; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
+        th { background-color: var(--verde-oliva); color: white; }
+        tr:hover { background-color: #fdf5f6; }
+        .status-confirmado { color: #27AE60; font-weight: bold; }
+        .status-pendente { color: #F39C12; font-weight: bold; }
+        .status-recusado { color: #E74C3C; font-weight: bold; }
+
+        /* Botão Exportar */
+        .btn-exportar { background-color: #27AE60; color: white; padding: 10px 20px; text-decoration: none; font-size: 0.9rem; border-radius: 5px; cursor: pointer; border: none; font-weight: bold; }
+        .btn-exportar:hover { background-color: #219653; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>🌿 Dashboard RSVP - Evelin & Maycon</h1>
+    
+    <div class="add-form-container">
+        <h3>➕ Adicionar Nova Família</h3>
+        <div class="form-group-row">
+            <input type="text" id="add-titular" class="form-input" style="flex: 1;" placeholder="Nome do Titular (Ex: Sônia Almeida)" required>
+            <input type="text" id="add-acompanhantes" class="form-input" style="flex: 2;" placeholder="Acompanhantes separados por vírgula">
+            <button id="btn-adicionar" class="btn-adicionar">Salvar Família</button>
+        </div>
+        <p style="font-size: 0.85rem; color: #666; margin-top: 10px; margin-bottom: 0;">* Deixe o campo de acompanhantes vazio se a pessoa for sozinha.</p>
+    </div>
+
+    <div class="resumo-grid">
+        <div class="card-resumo bg-total">
+            <h4>Total na Lista</h4><p id="total-convidados">0</p>
+        </div>
+        <div class="card-resumo bg-confirmados">
+            <h4>Confirmados (Pessoas)</h4><p id="total-confirmados">0</p>
+        </div>
+        <div class="card-resumo bg-pendentes">
+            <h4>Pendentes (Famílias)</h4><p id="total-pendentes">0</p>
+        </div>
+        <div class="card-resumo bg-recusados">
+            <h4>Não Vão (Pessoas)</h4><p id="total-recusados">0</p>
+        </div>
+    </div>
+
+    <div class="header-acoes">
+        <h2 style="color: var(--verde-oliva); margin: 0;">📋 Controle de Portaria</h2>
+        <button id="btn-exportar-convidados" class="btn-exportar">📥 Exportar para Excel</button>
+    </div>
+
+    <table id="tabela-convidados">
+        <thead>
+            <tr>
+                <th>Titular (Família)</th>
+                <th>Membro</th>
+                <th>Status do Grupo</th>
+                <th>Presença Individual</th>
+                <th>Mensagem</th>
+            </tr>
+        </thead>
+        <tbody><tr><td colspan="5" style="text-align: center;">A carregar dados do banco...</td></tr></tbody>
+    </table>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getFirestore, collection, getDocs, addDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+    // Chaves do Casamento da Evelin e Maycon
+    const firebaseConfig = {
+        apiKey: "AIzaSyBSCwxHXHrj0vB_NZRhzsnROSKNei5TCOc",
+        authDomain: "casamento-evelin-e-maycon.firebaseapp.com",
+        projectId: "casamento-evelin-e-maycon",
+        storageBucket: "casamento-evelin-e-maycon.firebasestorage.app",
+        messagingSenderId: "993871981240",
+        appId: "1:993871981240:web:12353cd22f7125b350224d",
+        measurementId: "G-ZVTFWRZB8N"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    let dadosExportacaoConvidados = [];
+
+    // --- CARREGAR CONVIDADOS ---
+    async function carregarConvidados() {
+        try {
+            const querySnapshot = await getDocs(collection(db, "convidados"));
+            const tbody = document.querySelector("#tabela-convidados tbody");
+            tbody.innerHTML = ""; 
+            dadosExportacaoConvidados = []; 
+
+            let contagemTotal = 0, contagemConfirmados = 0, contagemPendentesFamilias = 0, contagemRecusados = 0;
+
+            querySnapshot.forEach((doc) => {
+                const dados = doc.data();
+                
+                // 🛡️ Proteção Anti-Erro (Ignora documentos mal formatados no Firebase)
+                if (!dados || !dados.membros || !Array.isArray(dados.membros) || dados.membros.length === 0 || !dados.membros[0]) return; 
+
+                const titular = dados.membros[0].nome || "Sem Nome";
+                const statusGrupo = dados.status_convite || "pendente";
+                const mensagem = dados.mensagem_noivos || "";
+
+                if(statusGrupo === "pendente") contagemPendentesFamilias++;
+
+                dados.membros.forEach((membro) => {
+                    if(!membro || !membro.nome || typeof membro.nome !== 'string') return;
+
+                    contagemTotal++;
+                    let statusIndividual = "Pendente";
+                    let classeCor = "status-pendente";
+
+                    if (statusGrupo === "confirmado") {
+                        if (membro.confirmado) { statusIndividual = "Vai"; classeCor = "status-confirmado"; contagemConfirmados++; } 
+                        else { statusIndividual = "Não Vai"; classeCor = "status-recusado"; contagemRecusados++; }
+                    } else if (statusGrupo === "recusado") {
+                        statusIndividual = "Não Vai"; classeCor = "status-recusado"; contagemRecusados++;
+                    }
+
+                    dadosExportacaoConvidados.push([titular, membro.nome, statusGrupo, statusIndividual, mensagem.replace(/\n/g, " ")]);
+
+                    const tr = document.createElement("tr");
+                    tr.innerHTML = `
+                        <td><strong>${titular}</strong></td>
+                        <td>${membro.nome}</td>
+                        <td class="${statusGrupo === 'confirmado' ? 'status-confirmado' : statusGrupo === 'recusado' ? 'status-recusado' : 'status-pendente'}">${statusGrupo.toUpperCase()}</td>
+                        <td class="${classeCor}">${statusIndividual}</td>
+                        <td style="font-size: 0.85rem; color: #555;">${mensagem}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            });
+
+            document.getElementById("total-convidados").innerText = contagemTotal;
+            document.getElementById("total-confirmados").innerText = contagemConfirmados;
+            document.getElementById("total-pendentes").innerText = contagemPendentesFamilias;
+            document.getElementById("total-recusados").innerText = contagemRecusados;
+
+        } catch (error) { console.error("Erro Convidados:", error); }
+    }
+
+    // --- ADICIONAR CONVIDADO ---
+    document.getElementById("btn-adicionar").addEventListener("click", async () => {
+        const inputTitular = document.getElementById("add-titular");
+        const inputAcompanhantes = document.getElementById("add-acompanhantes");
+        const btnAdicionar = document.getElementById("btn-adicionar");
+        
+        const titularStr = inputTitular.value.trim();
+        const acompanhantesStr = inputAcompanhantes.value;
+
+        if (!titularStr) { alert("O nome do Titular é obrigatório!"); return; }
+        
+        btnAdicionar.innerText = "Salvando..."; 
+        btnAdicionar.disabled = true;
+
+        const membrosFormatados = [{ nome: titularStr, confirmado: false }];
+        if (acompanhantesStr.trim()) {
+            acompanhantesStr.split(",").forEach(nome => {
+                if(nome.trim()) membrosFormatados.push({ nome: nome.trim(), confirmado: false });
+            });
+        }
+
+        try {
+            await addDoc(collection(db, "convidados"), { 
+                status_convite: "pendente", 
+                mensagem_noivos: "", 
+                membros: membrosFormatados 
+            });
+            inputTitular.value = ""; inputAcompanhantes.value = "";
+            await carregarConvidados();
+            alert(`Família de ${titularStr} adicionada com sucesso!`);
+        } catch (error) { 
+            console.error("Erro:", error);
+            alert("Erro ao adicionar convidado. Verifique a consola."); 
+        } finally { 
+            btnAdicionar.innerText = "Salvar Família"; 
+            btnAdicionar.disabled = false; 
+        }
+    });
+
+    // --- EXPORTAR PARA EXCEL ---
+    document.getElementById("btn-exportar-convidados").addEventListener("click", () => {
+        if(dadosExportacaoConvidados.length === 0) { alert("Não há dados para exportar ainda."); return; }
+        
+        let csvContent = "data:text/csv;charset=utf-8,\uFEFF";
+        csvContent += "Titular,Convidado,Status Familia,Presenca,Mensagem\n";
+
+        dadosExportacaoConvidados.forEach(row => {
+            const linhaFormatada = row.map(campo => `"${campo}"`).join(";");
+            csvContent += linhaFormatada + "\n";
+        });
+
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", "lista_convidados_evelin_maycon.csv");
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    });
+
+    // Iniciar tudo ao carregar a página
+    carregarConvidados();
+</script>
+</body>
+</html>
